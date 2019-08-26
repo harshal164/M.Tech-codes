@@ -1,0 +1,9 @@
+#include<bits/stdc++>
+
+int main()
+{
+printf("hello\" world!");
+int i = 0, j=352525;
+0 0 0 0 0 0 ;
+return 0;
+}
