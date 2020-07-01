@@ -1,0 +1,12 @@
+syntax: regexp
+.*~$
+.*\.orig
+.*\.bk$
+.*\.bak
+.*\.pyc
+.*\.tmp$
+.*\.log$
+.*\.pickle
+syntax: glob
+xml/*
+_build/*

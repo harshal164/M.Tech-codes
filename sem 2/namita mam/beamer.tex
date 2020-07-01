@@ -1,0 +1,237 @@
+\documentclass[pdf]{beamer}
+\mode<presentation>{}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+% \usetheme{Madrid}
+\usetheme{Berkeley}
+% \usecolortheme{beaver}
+\usecolortheme{dolphin}
+%% preamble
+\usecolortheme{seahorse}
+\title{Action Recognition}
+\subtitle{Large-scale Video Classification with Convolutional Neural Networks
+\\Summary}
+
+\author{Harshal Patel\\2019pcp5048\\\\Guided By:Dr. Neeta Nain}
+
+\institute{MNIT}
+\date{\today}
+
+\begin{document}
+    %% title frame
+    \begin{frame}
+    \titlepage
+    \end{frame}
+    
+    %% normal frame
+    \begin{frame}{Overview}
+    \tableofcontents
+    \end{frame}
+    
+    \section{Introduction}
+    \begin{frame}{Action recognition and why is it tough?}
+        \begin{itemize}
+            \item Huge computational cost
+            \item Capturing long context
+            \item No standard benchmark dataset
+        \end{itemize} 
+    \end{frame}
+    \begin{frame}{Problem Definition}
+        \begin{itemize}
+            \item Action recognition task involves the identification of different actions from video clips (a sequence of 2D frames) where the action may or may not be performed throughout the entire duration of the video. 
+            \item This seems like a natural extension of image classification tasks to multiple frames and then aggregating the predictions from each frame. 
+            
+           
+        \end{itemize}
+    \end{frame}
+    
+    \section{Related Work}
+    \begin{frame}{Related Works}
+    \begin{itemize}
+        \item Traditional Approaches -
+        \begin{enumerate}
+            \item  Quantizing all
+features using a learned k-means dictionary
+            \item 3D-CNN \cite{3dcnn}
+        \end{enumerate}
+    \end{itemize}
+    \end{frame}
+    
+    \section{Approach}
+    \begin{frame}[allowframebreaks] {Approach: Time Information Fusion in CNNs}
+    \begin{enumerate}
+        \item Single Frame [\ref{fig:single_frame}]
+        \item Late Fusion [\ref{fig:late}]
+        \item Early Fusion [\ref{fig:early}]
+        \item Slow Fusion [\ref{fig:slow}]
+     \end{enumerate}
+    
+    
+        
+    
+        \\ \\
+        \begin{enumerate}
+            
+        
+            \item \textbf{Late Fusion:}\\Places two separate single-frame networks  with shared parameters a
+distance of 15 frames apart and then merges the two streams in fully connected layers
+            \item \textbf{Early Fusion:}\\
+            Combines information across an entire time window immediately on the pixel level. This is implemented by modifying the filters on the first convolutional layer in the single-frame model by extending them to be of size $11\times 11 \times 3 \times T$ pixels (T=temporal extent) (similar like 3D-CNN)
+            
+            \item \textbf{Slow Fusion:}\\
+            balanced mix between the two approaches that slowly fuses temporal information throughout the network such that higher layers get access to progressively more global information in
+both spatial and temporal dimensions.
+        \end{enumerate}
+    \end{frame}
+    
+    \section{Large-scale Video Classification with Convolutional Neural Networks
+}
+    \begin{frame}{Multiresolution CNNs \cite{lsvc}} 
+    \begin{itemize}
+        \item Used to speed up model while retaining performance 
+            
+        \begin{enumerate}
+            \item Reduce the number of layers and neurons in each layer but it lowers the performance
+            \item Fovea and context streams. \ref{fig:multiresolution_cnn}
+            \begin{itemize}
+                \item aims to strike a compromise by having two
+separate streams of processing over two spatial resolutions
+                \item context stream receives the downsampled frames at half the original spatial resolution: $89 \times 89$ pixels
+                
+                \item Fovea stream receives the center: $89 \times 89 $ region
+            \end{itemize}
+        \end{enumerate}
+        Notably, this design takes
+advantage of the camera bias present in many online videos,
+since the object of interest often occupies the center region.
+    \end{itemize}
+    \end{frame}
+    
+    
+       \begin{frame}{Multiresolution CNN}
+        \begin{figure}
+            \centering
+            \label{fig:multiresolution_cnn}
+            \includegraphics[width=75mm]{2.png}
+            \caption{ Multiresolution CNN architecture. Input frames
+are fed into two separate streams of processing: A context stream that models low-resolution image and a fovea stream that processes high-resolution center crop}
+            
+        \end{figure}
+    \end{frame}
+    
+    
+    \begin{frame}{Model Architecture}
+        \begin{figure}
+            \centering
+            \label{fig:single_frame}
+            \label{fig:late}
+            \label{fig:early}
+            \label{fig:slow}
+            \includegraphics[width=75mm]{1.jpg}
+            \caption{ Approaches for fusing information over
+temporal dimension through the network. Red, green and
+blue boxes indicate convolutional, normalization and pooling layers respectively.}
+            
+        \end{figure}
+        \begin{itemize}
+            \item The first layer takes as input an image of predefined size, and has size equal to number of pixels times 3 color channels.
+            \item The last layer outputs the 2k joint coordinates.
+        \end{itemize}
+    \end{frame}
+    
+    \section{Empirical Evaluation}
+    \begin{frame}{Datasets}
+        \begin{itemize}
+            \item Sports-1M dataset - 1million YouTube videos belonging to a taxonomy of 487 classes of sports.
+            \item UCF-101 dataset - 13,320 videos and 101 generic classes
+        \end{itemize}
+    \end{frame}
+    \begin{frame}{Results}
+        \begin{itemize}
+    
+            \item For slow fusion accuracy is  80.2 \% on Sports-1M dataset for top 5 results
+            \item 68.0\% accuracy for top 3 result on UCF-101 dataset with transfer learning
+        \end{itemize}
+    \end{frame}
+    
+    \section{Some more related papers}
+    \begin{frame}[allowframebreaks]{Other papers}
+    \begin{enumerate}
+        \item Two-Stream Convolutional Networks for Action Recognition in Videos \cite{2-stream-cnn}
+        \begin{itemize}
+            \item Jointly captures spatial relations between part locations and co-occurrence relations between part mixtures, augmenting standard pictorial structure models that encode spatial relations.
+
+        \end{itemize}
+        \item Long-term Recurrent Convolutional Networks for Visual Recognition and Description \cite{long-term-rnn}
+        \begin{itemize}
+            \item Uses LSTM to remember long term temporal information and uses extention of encoder-decoder for video representation , it uses CNN as encoder and LSTM as decoder. The architecture is trained end-to-end with input as RGB or optical flow of 16 frame clips. Final prediction for each clip is the average of predictions across each time step, it gives best result for weighted score of optical flow and RGB inputs.
+
+        \end{itemize}
+        
+        
+        \item Describing Videos by Exploiting Temporal Structure \cite{describe-video}
+        
+        \begin{itemize}
+            \item Introduced a temporal attention mechanism to exploit global temporal structure. Also augments the appearance features with action features that encode local temporal structure. they derived action features from 3-D CNN. Temporal attention mechanism focuses on a small subset of frames while generating description. It uses 3D-CNN-RNN architecture.
+
+        \end{itemize}
+     
+        
+         \item Show attend and tell:neural image generation with visual attention (for image description) \cite{show-attend-and-tell}
+         \begin{itemize}
+             \item Introduces an attention based model that automatically learns to describe the content of images. It describes how we can train this model in a deterministic manner using standard back-propagation techniques and stochastics. Rather than compress an entire image into a static representation, attention allows for important features to dynamically come to the forefront as needed. This is especially useful when
+there is lot of irrelevant things in image. As the model generates each word,its attention changes to reflect the relevant parts of the image. We can investigate models that can attend to important part of an image while generating its caption.
+
+         \end{itemize}
+         
+         
+    \end{enumerate}
+        
+    \end{frame}
+    
+    \section{References}
+    \begin{frame}[allowframebreaks]{References}
+        \begin{thebibliography}{5}
+        \bibitem{lsvc} 
+        Andrej Karpathy and George Toderici and Sanketh Shetty and Thomas Leung and Rahul Sukthankar and Li Fei-Fei
+        \textit {Large-scale Video Classification with Convolutional Neural Networks}. 
+        In CVPR, 2014,
+        
+        
+
+        \bibitem{3dcnn} 
+        Shuiwang Ji, Wei Xu, Ming Yang, Member, IEEE, and Kai Yu,
+        \textit {3D Convolutional Neural Networks
+for Human Action Recognition}. 
+        in IEEE TRANSACTIONS ON PATTERN ANALYSIS AND MACHINE INTELLIGENCE, VOL. 35, NO. 1, JANUARY 2013
+        
+        \bibitem{2-stream-cnn} 
+        Karen Simonyan Andrew Zisserman,
+        \textit {Two-Stream Convolutional Networks
+for Action Recognition in Videos}. 
+12 Nov 2014.
+
+
+    \bibitem{long-term-rnn} 
+        Jeff Donahue, Lisa Anne Hendricks, Marcus Rohrbach, Subhashini Venugopalan, Sergio Guadarrama,
+Kate Saenko, Trevor Darrell,
+        \textit {Long-term Recurrent Convolutional Networks for
+Visual Recognition and Descriptions}. May 2016.
+
+
+
+
+    \bibitem{describe-video} 
+        Li Yao et al.
+        \textit {Describing Videos by Exploiting Temporal Structure}.University of montreal, Oct 2015.
+
+\bibitem{show-attend-and-tell} 
+Kelvin Xu, Jimmy Ba, Ryan Kiros, Kyunghyun Cho, Aaron Courville, Ruslan Salakhutdinov, Richard Zemel, Yoshua Bengio,
+\textit{Show, Attend and Tell: Neural Image Caption Generation with Visual Attention},Apr 2016 .
+
+        \end{thebibliography}
+    \end{frame}
+\end{document}
