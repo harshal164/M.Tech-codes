@@ -1,0 +1,11 @@
+DVWA:
+
+install: docker pull vulnerables/web-dvwa
+
+sudo docker run --rm -it -p 81:81 vulnerables/web-dvwa
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+\contentsline {section}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {2}Applications}{2}
+\contentsline {section}{\numberline {3}Types of GAN}{3}
+\contentsline {subsection}{\numberline {3.1}Vanilla GAN}{3}
+\contentsline {subsection}{\numberline {3.2}DCGAN}{3}
+\contentsline {subsection}{\numberline {3.3}Progressive GAN}{3}
+\contentsline {subsection}{\numberline {3.4}SRGAN}{3}

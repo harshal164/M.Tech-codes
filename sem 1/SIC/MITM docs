@@ -1,0 +1,9 @@
+laptop should be on same lan or wifi
+
+install ettercap
+do arp poisioning
+1. do unified sniffing
+2. san for host
+3. select first ip as source 1 and second ip as souc=rece 2
+3.sniff remote connection
+4. tract by wireshark

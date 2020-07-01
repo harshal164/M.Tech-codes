@@ -1,0 +1,106 @@
+\documentclass[12pt, a4]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\lstset{
+	breaklines=true,
+	columns=flexible,
+	}
+\begin{document}
+\title{OpenSSL - Lab Assignment 2}
+\author{Snehal Gharat}
+\date{\today}
+\maketitle
+
+\section{OpenSSL Basics}
+\begin{itemize}
+\item OpenSSL provides a command line application to perform a wide variety of cryptography tasks, such as creating and handling certificates and related files.
+\item We can obtain a list of available ciphers by using the \textbf{list-cipher-algorithms}  command  
+\begin{lstlisting}
+$ openssl list-cipher-algorithms
+\end{lstlisting}
+\item Options
+\begin{itemize}
+\item[1.] \textbf{-in filename}: Specifies the input file 
+\item[2.] \textbf{-out filename}: Specifies the output file
+\item[3.] \textbf{-e or -d}: Specifies whether to encrypt (-e) or to decrypt (-d).
+\item[4.] \textbf{-a, -base64}: These flags tell OpenSSL to apply Base64 encoding before or after cryptographic operation
+\item[5.] \textbf{-iv IV}: specifies the initialization vector IV as hexadecimal number
+\item[6.] \textbf{-K key}: allows us to set the key used for encryption or decryption.
+\item[7.] \textbf{-salt, -nosalt}: Allows to switch salting on or off.
+\end{itemize}
+\end{itemize}
+
+\section{OBSERVATIONS}
+\subsection{Electronic Code Book (ECB)}
+
+\begin{itemize}
+\begin{lstlisting}
+$ openssl enc -des-ecb -in input.bin -out ecb_encrypt1.bin -a -salt -K 342f1982c2ee32
+\end{lstlisting}
+\item This command reads our message which is written in input.bin file, \textbf{encrypts it} and writes the output in ecbencrypt1.bin file.
+\item Here we have used the key K as \textbf{342f1982c2ee32}
+\item Using the \textbf{xxd input.bin} and \textbf{xxd ecbencrypt1.bin} we observe the hex dump codes of this files
+% ecb image
+\begin{center}
+\includegraphics[scale=0.5]{ecb.png}
+\end{center}
+
+\item When we change some values in the input file, we can see the resulting change in corresponding output file. Here I have made changes in last digit of second line.
+\begin{center}
+\includegraphics[scale=0.5]{ecb2.png}
+\end{center}
+\item When we decrypt it we get the following results, we need to use the same key for decryption.
+\begin{lstlisting}
+$ opensecb -in ecb_encrypt1.bin -a -salt -K 342f1982c2ee32
+\end{lstlisting}
+\begin{center}
+\includegraphics[scale=0.5]{ecb_d.png}
+\end{center}
+\end{itemize}
+
+\subsection{Cipher Block Chaining (CBC)}
+\begin{itemize}
+\item Here we need to mention the intial vector (IV) option in the command.
+\begin{lstlisting}
+$ openssl enc -des-cbc -in input.bin -out cbc_encrypt1.bin -a -salt -iv 0000000000000000 -K 342f1982c2ee32
+\end{lstlisting}
+\item Here we observe that, only the first line of hex code is same as that of EBC mode hex code.
+\begin{center}
+\includegraphics[scale=0.5]{cbc.png}
+\end{center}
+\end{itemize}
+
+\subsection{Cipher Feedback Mode (CFB)}
+\begin{itemize}
+\item As we can see that there are no similarities between CFB and ECB or CBC mode.
+\item The encryption and decryption commands are -
+\begin{lstlisting}
+$ openssl enc -des-cfb -in input.bin -out cfb_encrypt1.bin -a -salt -iv 0000000000000000 -K 342f1982c2ee32
+
+$ openssl enc -d -des-cfb -in cfb_encrypt2.bin -a -salt -iv 0000000000000000 -K 342f1982c2ee32
+\end{lstlisting}
+\begin{center}
+\includegraphics[scale=0.5]{cfb.png}
+\end{center}
+\item Also observe the bits changed due to single error bit.
+\begin{center}
+\includegraphics[scale=0.5]{cfb_err.png}
+\end{center}
+
+\end{itemize}
+\subsection{Output Feedback Mode (OFB)}
+\begin{itemize}
+\item Here we observe that, due to a single error bit only one bit is being changed in the encrypted file.
+\begin{center}
+\includegraphics[scale=0.5]{ofb.png}
+\end{center}
+\end{itemize}
+
+\subsection{Counter Mode}
+\begin{itemize}
+\item This is not possible using \textbf{openssl enc -des} command
+\end{itemize}
+
+\end{document}
